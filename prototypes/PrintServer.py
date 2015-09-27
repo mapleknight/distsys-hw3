@@ -9,14 +9,10 @@ def process(conn):
     userInput = conn.recv(BUFFER_SIZE)
     if not userInput:
         print "Error reading message"
-        sys.exit(1)
+        conn.close()
+        return
     # print the userInput at server
-    print "Received message: ", userInput
-    try:
-        #print the userInput at client
-        conn.send(userInput);
-    except:
-        conn.send("Input Error!\n");
+    print "Message received: ", userInput
 
     conn.close()
 
@@ -26,11 +22,15 @@ BUFFER_SIZE = 1024
 interface = ""
 
 # if input arguments are wrong, print out usage
-#if len(sys.argv) != 2:
-#    print >> sys.stderr, "usage: python {0} portnum\n".format(sys.argv[0])
-#    sys.exit(1)
+if len(sys.argv) < 2:
+    print >> sys.stderr, "usage: python {0} portnum".format(sys.argv[0])
+    sys.exit(1)
 
-portnum = int(sys.argv[1])
+try:
+    portnum = int(sys.argv[1])
+except:
+    print "portnum should be an interger"
+    sys.exit(1)
 
 # create socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
